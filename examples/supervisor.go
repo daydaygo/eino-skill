@@ -15,9 +15,15 @@ import (
 func main() {
 	ctx := context.Background()
 
+	baseURL := os.Getenv("OPENAI_BASE_URL")
+	if baseURL == "" {
+		baseURL = "https://api.openai.com/v1"
+	}
+
 	model, _ := openai.NewChatModel(ctx, &openai.ChatModelConfig{
-		APIKey: os.Getenv("OPENAI_API_KEY"),
-		Model:  "gpt-4o-mini",
+		BaseURL: baseURL,
+		APIKey:  os.Getenv("OPENAI_API_KEY"),
+		Model:   os.Getenv("OPENAI_MODEL"),
 	})
 
 	// 创建计算工具

@@ -72,9 +72,15 @@ import (
     "github.com/cloudwego/eino/schema"
 )
 
+baseURL := os.Getenv("OPENAI_BASE_URL")
+if baseURL == "" {
+    baseURL = "https://api.openai.com/v1"
+}
+
 model, _ := openai.NewChatModel(ctx, &openai.ChatModelConfig{
-    APIKey: os.Getenv("OPENAI_API_KEY"),
-    Model:  "gpt-4",
+    BaseURL: baseURL,
+    APIKey:  os.Getenv("OPENAI_API_KEY"),
+    Model:   os.Getenv("OPENAI_MODEL"),
 })
 
 msg, _ := model.Generate(ctx, []*schema.Message{
@@ -82,6 +88,14 @@ msg, _ := model.Generate(ctx, []*schema.Message{
     schema.UserMessage("Hello!"),
 })
 ```
+
+**环境变量配置：**
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `OPENAI_BASE_URL` | API 地址 | `https://api.openai.com/v1` |
+| `OPENAI_API_KEY` | API 密钥 | 无 |
+| `OPENAI_MODEL` | 模型名称 | 无 |
 
 ### 2. 创建 Tool
 
