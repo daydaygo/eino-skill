@@ -14,6 +14,7 @@ description: |
   - 流式处理、Stream、StreamReader
   - Callback、回调、追踪、Trace
   - 人机协作、中断恢复、Interrupt、Resume
+  - 可视化、Mermaid、Graph 可视化、拓扑图
   
   即使没有明确提到 "eino"，如果用户在 Go 中构建 LLM 应用或 Agent，也使用此 skill。
 ---
@@ -201,6 +202,56 @@ result, _ := chain.Invoke(ctx, map[string]any{"query": "Hello"})
 | 线性工作流 | SequentialAgent | 按顺序执行多个 Agent |
 | 并行任务 | ParallelAgent | 并发执行多个 Agent |
 
+## 可视化
+
+将 Graph/Chain/Workflow 渲染为 Mermaid 图表，便于理解编排结构。
+
+### 使用方式
+
+```go
+import "github.com/cloudwego/eino-examples/devops/visualize"
+
+// 创建可视化生成器
+gen := visualize.NewMermaidGenerator(dir)
+
+// 编译时注入回调
+compiled, _ := graph.Compile(ctx, 
+    compose.WithGraphCompileCallbacks(gen),
+    compose.WithGraphName("MyGraph"),
+)
+
+// 自动生成 .md 和 .png 文件
+```
+
+### 输出示例
+
+```mermaid
+graph TD
+    start_node([START])
+    chat_model["chat_model<br/>(ChatModel)"]
+    tools["tools<br/>(ToolsNode)"]
+    end_node([END])
+    
+    start_node --> chat_model
+    chat_model -- control+data --> tools
+    tools --> end_node
+```
+
+### 边类型说明
+
+| 边类型 | 语法 | 含义 |
+|--------|------|------|
+| control+data | `-->` | 控制流和数据流同时存在 |
+| control-only | `==>` | 仅控制流 |
+| data-only | `-.->` | 仅数据流 |
+
+### 依赖
+
+```bash
+# 可选：安装 mermaid-cli 生成图片
+npm install -g @mermaid-js/mermaid-cli
+```
+
 ## 参考文档
 
 按需读取以下参考文档获取详细信息：
@@ -210,6 +261,7 @@ result, _ := chain.Invoke(ctx, map[string]any{"query": "Hello"})
 - `references/multi-agent.md` - 多 Agent 协作模式
 - `references/tools.md` - Tool 创建完整指南
 - `references/orchestration.md` - Chain/Graph 编排
+- `references/visualization.md` - 可视化工具使用指南
 
 ## 常见问题
 
